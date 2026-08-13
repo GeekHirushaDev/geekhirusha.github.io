@@ -96,6 +96,26 @@
         </div>
       </div>
 
+      <div style="background:#0F172A; border-radius:16px; padding:15px 16px; margin-bottom:14px;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:12px;">
+          <div>
+            <div style="color:#94A3B8; font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:4px;">Today's campus · {{ todayDate }}</div>
+            <div style="color:#fff; font-weight:800; font-size:15px;">{{ assignedUni }}</div>
+          </div>
+          <span style="background:{{ dutyPillBg }}; color:{{ dutyPillColor }}; font-weight:700; font-size:10.5px; padding:5px 9px; border-radius:8px; white-space:nowrap; flex-shrink:0;">{{ dutyLabel }}</span>
+        </div>
+        <div style="color:#94A3B8; font-size:11.5px; line-height:1.5;">{{ dutyNote }}</div>
+      </div>
+
+      <sc-if value="{{ !onDuty }}" hint-placeholder-val="{{false}}">
+      <div style="background:#fff; border:1px solid #E2E8F0; border-radius:18px; padding:30px 20px; text-align:center; margin-bottom:16px;">
+        <div style="width:56px; height:56px; border-radius:50%; background:#FEF3C7; color:#B45309; margin:0 auto 14px; display:flex; align-items:center; justify-content:center; font-size:20px; font-weight:800;">!</div>
+        <div style="font-weight:700; font-size:15px; margin-bottom:6px;">Not your duty day</div>
+        <div style="color:#64748B; font-size:13px; margin-bottom:18px;">Only one rider runs each university per day. Admin has {{ standInRider }} on {{ assignedUni }} today — you'll see orders again on your next rostered day.</div>
+        <button onClick="{{ requestDuty }}" style="background:#0F172A; color:#fff; border:none; font-weight:700; font-size:13px; padding:11px 20px; border-radius:12px; cursor:pointer;">Request a duty swap</button>
+      </div>
+      </sc-if>
+
       <sc-if value="{{ isOffline }}" hint-placeholder-val="{{false}}">
         <div style="background:#fff; border:1px solid #E2E8F0; border-radius:18px; padding:40px 20px; text-align:center; margin-bottom:16px;">
           <div style="width:64px; height:64px; border-radius:50%; background:#F1F5F9; margin:0 auto 16px; display:flex; align-items:center; justify-content:center; font-size:20px; color:#94A3B8; font-weight:800;">Zz</div>
@@ -206,7 +226,12 @@
           <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span style="color:#64748B; font-size:12px;">Deliveries</span><span style="font-weight:700; font-size:13px;">{{ totalStops }} stops</span></div>
           <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span style="color:#64748B; font-size:12px;">Pickups</span><span style="font-weight:700; font-size:13px;">{{ pickupCount }} shops</span></div>
           <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span style="color:#64748B; font-size:12px;">Total distance</span><span style="font-weight:700; font-size:13px;">{{ totalDistance }}</span></div>
-          <div style="display:flex; justify-content:space-between;"><span style="color:#64748B; font-size:12px;">Est. travel time</span><span style="font-weight:700; font-size:13px;">{{ travelTime }}</span></div>
+          <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span style="color:#64748B; font-size:12px;">Est. travel time</span><span style="font-weight:700; font-size:13px;">{{ travelTime }}</span></div>
+          <div style="display:flex; justify-content:space-between;"><span style="color:#64748B; font-size:12px;">Est. fuel cost</span><span style="font-weight:700; font-size:13px;">Rs. {{ fuelCost }}</span></div>
+        </div>
+        <div style="background:#F8FAFC; border-radius:14px; padding:14px; margin-bottom:14px;">
+          <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span style="color:#64748B; font-size:12px;">Courier fees in this batch</span><span style="font-weight:700; font-size:13px;">Rs. {{ batchCourierFees }}</span></div>
+          <div style="display:flex; justify-content:space-between;"><span style="color:#64748B; font-size:12px;">Admin commission (15%)</span><span style="font-weight:700; font-size:13px; color:#DC2626;">−Rs. {{ batchCommission }}</span></div>
         </div>
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
           <span style="color:#64748B; font-size:12px;">You'll earn</span>
@@ -239,10 +264,19 @@
           </div>
         </div>
 
-        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:14px;">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px;">
           <div style="background:#fff; border:1px solid #E2E8F0; border-radius:13px; padding:12px;"><div style="color:#64748B; font-size:10.5px; margin-bottom:3px;">Distance</div><div style="font-weight:800; font-size:15px;">{{ totalDistance }}</div></div>
           <div style="background:#fff; border:1px solid #E2E8F0; border-radius:13px; padding:12px;"><div style="color:#64748B; font-size:10.5px; margin-bottom:3px;">Travel time</div><div style="font-weight:800; font-size:15px;">{{ travelTime }}</div></div>
+          <div style="background:#fff; border:1px solid #E2E8F0; border-radius:13px; padding:12px;"><div style="color:#64748B; font-size:10.5px; margin-bottom:3px;">Fuel cost</div><div style="font-weight:800; font-size:15px;">Rs. {{ fuelCost }}</div></div>
           <div style="background:#fff; border:1px solid #E2E8F0; border-radius:13px; padding:12px;"><div style="color:#64748B; font-size:10.5px; margin-bottom:3px;">Remaining</div><div style="font-weight:800; font-size:15px;">{{ remainingCount }}</div></div>
+        </div>
+
+        <div style="background:#ECFDF5; border:1px solid #A7F3D0; border-radius:14px; padding:14px; margin-bottom:14px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:8px;">
+            <div style="font-weight:800; font-size:13px; color:#0F766E;">Cheapest-fuel route selected</div>
+            <span style="background:#fff; color:#0F766E; font-weight:700; font-size:10.5px; padding:4px 8px; border-radius:7px; white-space:nowrap;">Saves Rs. {{ fuelSaved }}</span>
+          </div>
+          <div style="color:#0F766E; font-size:11.5px; line-height:1.55;">{{ routeReason }}</div>
         </div>
 
         <div style="background:#fff; border:1px solid #E2E8F0; border-radius:16px; padding:16px; margin-bottom:14px;">
@@ -322,13 +356,27 @@
         </div>
       </div>
       <div style="background:#fff; border:1px solid #E2E8F0; border-radius:16px; padding:16px; margin-bottom:16px;">
-        <div style="font-weight:700; font-size:13px; margin-bottom:12px;">How batch pay works</div>
-        <div style="display:flex; justify-content:space-between; font-size:13px; color:#475569; margin-bottom:8px;"><span>Base batch pay</span><span style="font-weight:700; color:#0F172A;">Rs. 420</span></div>
-        <div style="display:flex; justify-content:space-between; font-size:13px; color:#475569; margin-bottom:8px;"><span>Per-stop bonus (6 stops)</span><span style="font-weight:700; color:#0F172A;">Rs. 240</span></div>
-        <div style="display:flex; justify-content:space-between; font-size:13px; color:#475569;"><span>Outside-zone distance bonus</span><span style="font-weight:700; color:#0F172A;">Rs. 60</span></div>
-        <div style="display:flex; justify-content:space-between; font-size:15px; font-weight:800; margin-top:12px; padding-top:12px; border-top:1px solid #F1F5F9;"><span>Typical batch</span><span>Rs. 720</span></div>
+        <div style="font-weight:700; font-size:13px; margin-bottom:4px;">How your pay is calculated</div>
+        <div style="color:#64748B; font-size:11.5px; line-height:1.5; margin-bottom:12px;">You earn from courier fees only. Admin keeps 15% of every courier fee; product money is never yours.</div>
+        <div style="display:flex; justify-content:space-between; font-size:13px; color:#475569; margin-bottom:8px;"><span>Courier fees collected (week)</span><span style="font-weight:700; color:#0F172A;">Rs. {{ weekCourierFees }}</span></div>
+        <div style="display:flex; justify-content:space-between; font-size:13px; color:#DC2626; margin-bottom:8px;"><span>Admin commission (15%)</span><span style="font-weight:700;">−Rs. {{ weekCommission }}</span></div>
+        <div style="display:flex; justify-content:space-between; font-size:15px; font-weight:800; margin-top:10px; padding-top:12px; border-top:1px solid #F1F5F9;"><span>Your earnings (85%)</span><span style="color:#0F766E;">Rs. {{ weeklyTotal }}</span></div>
       </div>
-      <button style="width:100%; background:#0F172A; color:#fff; border:none; font-weight:700; font-size:14px; padding:14px; border-radius:12px; cursor:pointer;">Cash out to bank</button>
+
+      <div style="background:#fff; border:1px solid #E2E8F0; border-radius:16px; padding:16px; margin-bottom:16px;">
+        <div style="font-weight:700; font-size:13px; margin-bottom:12px;">Settlement with admin</div>
+        <div style="display:flex; justify-content:space-between; font-size:13px; color:#475569; margin-bottom:8px;"><span>Cash collected from students</span><span style="font-weight:700; color:#0F172A;">Rs. {{ cashCollected }}</span></div>
+        <div style="display:flex; justify-content:space-between; font-size:13px; color:#475569; margin-bottom:8px;"><span>Your share held back from cash</span><span style="font-weight:700; color:#0F766E;">−Rs. {{ cashKeptShare }}</span></div>
+        <div style="display:flex; justify-content:space-between; font-size:13px; color:#475569; margin-bottom:8px;"><span>Owed to admin (product + commission)</span><span style="font-weight:700; color:#B45309;">Rs. {{ owedToAdmin }}</span></div>
+        <div style="display:flex; justify-content:space-between; font-size:13px; color:#475569;"><span>Admin owes you (online-paid orders)</span><span style="font-weight:700; color:#0F766E;">Rs. {{ owedToRider }}</span></div>
+        <div style="display:flex; justify-content:space-between; align-items:center; font-size:15px; font-weight:800; margin-top:10px; padding-top:12px; border-top:1px solid #F1F5F9;"><span>{{ netSettlementLabel }}</span><span style="color:{{ netSettlementColor }};">Rs. {{ netSettlement }}</span></div>
+        <div style="background:#F8FAFC; border-radius:11px; padding:11px 12px; margin-top:12px; color:#64748B; font-size:11.5px; line-height:1.5;">Settle before {{ settleDeadline }} to stay eligible for tomorrow's roster.</div>
+      </div>
+
+      <div style="display:flex; gap:10px;">
+        <button style="flex:1; background:#0F172A; color:#fff; border:none; font-weight:700; font-size:13.5px; padding:14px; border-radius:12px; cursor:pointer;">Settle Rs. {{ owedToAdmin }}</button>
+        <button style="flex:1; background:#F1F5F9; color:#0F172A; border:none; font-weight:700; font-size:13.5px; padding:14px; border-radius:12px; cursor:pointer;">Cash out</button>
+      </div>
     </div>
     </sc-if>
 
@@ -355,9 +403,20 @@
       <div style="background:#fff; border:1px solid #E2E8F0; border-radius:14px; overflow:hidden; margin-bottom:20px;">
         <div style="display:flex; justify-content:space-between; padding:14px 16px; border-bottom:1px solid #F1F5F9; gap:10px;"><span style="font-size:13px; color:#64748B;">Phone</span><span style="font-size:13px; font-weight:600;">{{ phone }}</span></div>
         <div style="display:flex; justify-content:space-between; padding:14px 16px; border-bottom:1px solid #F1F5F9; gap:10px;"><span style="font-size:13px; color:#64748B;">Vehicle</span><span style="font-size:13px; font-weight:600;">{{ vehicleLabel }}</span></div>
-        <div style="display:flex; justify-content:space-between; padding:14px 16px; border-bottom:1px solid #F1F5F9; gap:10px;"><span style="font-size:13px; color:#64748B;">Assigned zones</span><span style="font-size:13px; font-weight:600;">Zone A · Zone B</span></div>
-        <div style="display:flex; justify-content:space-between; padding:14px 16px; gap:10px;"><span style="font-size:13px; color:#64748B;">Max batch size</span><span style="font-size:13px; font-weight:600;">8 orders</span></div>
+        <div style="display:flex; justify-content:space-between; padding:14px 16px; border-bottom:1px solid #F1F5F9; gap:10px;"><span style="font-size:13px; color:#64748B;">Registered university (today)</span><span style="font-size:13px; font-weight:600; text-align:right;">{{ assignedUni }}</span></div>
+        <div style="display:flex; justify-content:space-between; padding:14px 16px; border-bottom:1px solid #F1F5F9; gap:10px;"><span style="font-size:13px; color:#64748B;">Duty status</span><span style="font-size:13px; font-weight:600;">{{ dutyLabel }}</span></div>
+        <div style="display:flex; justify-content:space-between; padding:14px 16px; gap:10px;"><span style="font-size:13px; color:#64748B;">Commission to admin</span><span style="font-size:13px; font-weight:600;">15% of courier fee</span></div>
       </div>
+      <div style="font-weight:800; font-size:14px; margin-bottom:10px;">My roster this week</div>
+      <div style="background:#fff; border:1px solid #E2E8F0; border-radius:14px; overflow:hidden; margin-bottom:20px;">
+        <sc-for list="{{ roster }}" as="d" hint-placeholder-count="7">
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:12px 16px; border-bottom:1px solid #F1F5F9; gap:10px;">
+            <div><div style="font-weight:700; font-size:13px;">{{ d.day }}</div><div style="color:#94A3B8; font-size:11px;">{{ d.uni }}</div></div>
+            <span style="background:{{ d.bg }}; color:{{ d.color }}; font-weight:700; font-size:11px; padding:4px 9px; border-radius:7px; white-space:nowrap; flex-shrink:0;">{{ d.label }}</span>
+          </div>
+        </sc-for>
+      </div>
+
       <div style="background:#fff; border:1px solid #E2E8F0; border-radius:14px; overflow:hidden;">
         <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 16px; border-bottom:1px solid #F1F5F9;"><span style="font-size:14px; font-weight:600;">Batch offer alerts</span><div style="width:38px; height:21px; border-radius:11px; background:#0F766E; position:relative; flex-shrink:0;"><div style="width:17px; height:17px; border-radius:50%; background:#fff; position:absolute; top:2px; right:2px;"></div></div></div>
         <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 16px;"><span style="font-size:14px; font-weight:600; color:#EF4444;">Log out</span><span style="color:#94A3B8;">→</span></div>
@@ -389,12 +448,26 @@ const PICKUPS = [
 ];
 
 const STOPS = [
-  { name: 'Kudaligama Hostel — Room 108', detail: 'Tharindu J. · 1 bag', coord: [6.7135, 80.7761] },
-  { name: 'Faculty of Applied Sciences — ICT', detail: 'Ishara P. · 2 bags', coord: [6.7121, 80.7775] },
-  { name: 'Kudaligama Hostel — Room 214', detail: 'Nadeesha P. · 1 bag', coord: [6.7130, 80.7793] },
-  { name: 'Wewalwatta Hostel — Room 32', detail: 'Sanduni W. · 1 bag', coord: [6.7112, 80.7806] },
-  { name: 'Faculty of Management Studies', detail: 'Kavindu R. · 1 bag', coord: [6.7098, 80.7788] },
-  { name: 'Uva Hostel Block A — Room 7', detail: 'Amaya S. · 2 bags', coord: [6.7089, 80.7764] }
+  { name: 'Kudaligama Hostel — Room 108', detail: 'Tharindu J. · 1 bag · Zone A', fee: 80, coord: [6.7135, 80.7761] },
+  { name: 'Faculty of Applied Sciences — ICT', detail: 'Ishara P. · 2 bags · Zone A', fee: 80, coord: [6.7121, 80.7775] },
+  { name: 'Kudaligama Hostel — Room 214', detail: 'Nadeesha P. · 1 bag · Zone A', fee: 80, coord: [6.7130, 80.7793] },
+  { name: 'Wewalwatta Hostel — Room 32', detail: 'Sanduni W. · 1 bag · Zone B', fee: 120, coord: [6.7112, 80.7806] },
+  { name: 'Faculty of Management Studies', detail: 'Kavindu R. · 1 bag · Zone B', fee: 120, coord: [6.7098, 80.7788] },
+  { name: 'Uva Hostel Block A — Room 7', detail: 'Amaya S. · 2 bags · Zone C', fee: 200, coord: [6.7089, 80.7764] }
+];
+
+const ADMIN_COMMISSION = 0.15;
+const GMAP_TILES = 'https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}';
+const GMAP_SUBS = ['mt0', 'mt1', 'mt2', 'mt3'];
+
+const ROSTER = [
+  { day: 'Mon 10 Aug', uni: 'Sabaragamuwa University', me: true },
+  { day: 'Tue 11 Aug', uni: 'Ruwan B. on duty', me: false },
+  { day: 'Wed 12 Aug', uni: 'Sabaragamuwa University', me: true },
+  { day: 'Thu 13 Aug', uni: 'Sabaragamuwa University', me: true, today: true },
+  { day: 'Fri 14 Aug', uni: 'Ruwan B. on duty', me: false },
+  { day: 'Sat 15 Aug', uni: 'Sabaragamuwa University', me: true },
+  { day: 'Sun 16 Aug', uni: 'No campus run', me: false }
 ];
 
 const HISTORY = [
@@ -419,7 +492,8 @@ class Component extends DCLogic {
     picked: [],
     stopIndex: 0,
     otpOpen: false,
-    screen: 'batch'
+    screen: 'batch',
+    onDuty: true
   };
 
   mapRef = React.createRef();
@@ -442,7 +516,7 @@ class Component extends DCLogic {
     const all = PICKUPS.map(p => p.coord).concat(STOPS.map(s => s.coord));
     if (!this._map) {
       this._map = L.map(el, { zoomControl: false, attributionControl: false, scrollWheelZoom: false });
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(this._map);
+      L.tileLayer(GMAP_TILES, { maxZoom: 20, subdomains: GMAP_SUBS }).addTo(this._map);
       this._map.fitBounds(all, { padding: [26, 26] });
       this._layer = L.layerGroup().addTo(this._map);
     }
@@ -509,10 +583,22 @@ class Component extends DCLogic {
       };
     });
 
-    const perStop = 40;
-    const batchEarnings = 420 + activeStops.length * perStop + 60;
+    const batchCourierFees = activeStops.reduce((a, st) => a + st.fee, 0);
+    const batchCommission = Math.round(batchCourierFees * ADMIN_COMMISSION);
+    const batchEarnings = batchCourierFees - batchCommission;
     const weeklyTotal = WEEK_BARS.reduce((a, b) => a + b.val, 0);
     const maxBar = Math.max.apply(null, WEEK_BARS.map(b => b.val));
+    const weekCourierFees = Math.round(weeklyTotal / (1 - ADMIN_COMMISSION));
+    const weekCommission = weekCourierFees - weeklyTotal;
+    const cashCollected = 18450;
+    const cashKeptShare = 1980;
+    const owedToAdmin = cashCollected - cashKeptShare;
+    const owedToRider = 1190;
+    const netSettlement = owedToAdmin - owedToRider;
+
+    const distanceKm = 4.8;
+    const fuelCost = Math.round(distanceKm * 22);
+    const fuelSaved = 46;
 
     const navTarget = collecting ? PICKUPS[Math.min(s.picked.length, PICKUPS.length - 1)] : activeStops[idx];
 
@@ -552,11 +638,39 @@ class Component extends DCLogic {
       onlineTextColor: s.online ? '#0F766E' : '#64748B',
       onlineLabel: s.online ? 'Online' : 'Offline',
       toggleOnline: () => this.setState(st => ({ online: !st.online })),
-      isOffline: !s.online && s.batchPhase === 'idle',
-      isIdleOnline: s.online && s.batchPhase === 'idle',
+      isOffline: s.onDuty && !s.online && s.batchPhase === 'idle',
+      isIdleOnline: s.onDuty && s.online && s.batchPhase === 'idle',
       dispatchCountdown: '12 min',
-      queueLabel: '18 orders queued at Sabaragamuwa University',
+      queueLabel: '18 orders queued at Sabaragamuwa University — your campus only',
       simulateIncoming: () => this.setState({ batchPhase: 'offer' }),
+
+      onDuty: s.onDuty,
+      todayDate: 'Thu 13 Aug',
+      assignedUni: 'Sabaragamuwa University',
+      dutyLabel: s.onDuty ? 'On duty' : 'Off roster',
+      dutyPillBg: s.onDuty ? 'rgba(16,185,129,0.18)' : 'rgba(245,158,11,0.18)',
+      dutyPillColor: s.onDuty ? '#6EE7B7' : '#FCD34D',
+      dutyNote: s.onDuty
+        ? 'You are the only rider running this campus today. Only orders inside this university area reach you.'
+        : 'Another rider is rostered for this campus today.',
+      standInRider: 'Ruwan Bandara',
+      requestDuty: () => this.setState({ onDuty: true }),
+      roster: ROSTER.map(r => ({
+        day: r.today ? r.day + ' · today' : r.day,
+        uni: r.uni,
+        label: r.me ? 'My duty' : 'Off',
+        bg: r.me ? '#ECFDF5' : '#F1F5F9',
+        color: r.me ? '#0F766E' : '#64748B'
+      })),
+      fuelCost, fuelSaved,
+      routeReason: 'Route ordered by fuel burn, not distance — avoids the Wewalwatta hill climb and two U-turns on the main road.',
+      batchCourierFees: batchCourierFees.toLocaleString(), batchCommission: batchCommission.toLocaleString(),
+      weekCourierFees: weekCourierFees.toLocaleString(), weekCommission: weekCommission.toLocaleString(),
+      cashCollected: cashCollected.toLocaleString(), cashKeptShare: cashKeptShare.toLocaleString(), owedToAdmin: owedToAdmin.toLocaleString(), owedToRider: owedToRider.toLocaleString(),
+      netSettlement: Math.abs(netSettlement).toLocaleString(),
+      netSettlementLabel: netSettlement >= 0 ? 'Net payable to admin' : 'Net receivable from admin',
+      netSettlementColor: netSettlement >= 0 ? '#B45309' : '#0F766E',
+      settleDeadline: '11:00 PM today',
       showIncomingSheet: s.batchPhase === 'offer',
       rejectBatch: () => this.setState({ batchPhase: 'idle' }),
       acceptBatch: () => this.setState({ batchPhase: 'active', picked: [], stopIndex: 0 }),
@@ -566,7 +680,7 @@ class Component extends DCLogic {
       batchId: 'B-2041',
       totalStops: activeStops.length,
       remainingCount,
-      batchEarnings,
+      batchEarnings: batchEarnings.toLocaleString(),
       totalDistance: '4.8 km',
       travelTime: '34 min',
       phaseLabel: collecting ? 'Collecting items' : 'Delivering batch',
@@ -600,10 +714,10 @@ class Component extends DCLogic {
       showBatchComplete: s.batchPhase === 'complete',
       finishBatch: () => this.setState({ batchPhase: 'idle', picked: [], stopIndex: 0, screen: 'batch' }),
 
-      todayEarnings: 2310,
+      todayEarnings: (2310).toLocaleString(),
       batchesToday: 3,
       history: HISTORY,
-      weeklyTotal, weeklyBatches: 21, weeklyStops: 118, rating: 4.9,
+      weeklyTotal: weeklyTotal.toLocaleString(), weeklyBatches: 21, weeklyStops: 118, rating: 4.9,
       weekBars: WEEK_BARS.map((b, i) => ({ day: b.day, color: i === 5 ? '#0F766E' : '#CCFBF1', height: Math.round((b.val / maxBar) * 90) }))
     };
   }

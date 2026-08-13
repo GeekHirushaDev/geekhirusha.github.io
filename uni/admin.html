@@ -370,13 +370,21 @@
         <div style="font-weight:800; font-size:15px; margin-bottom:16px;">Pricing engine preview</div>
         <div style="display:flex; justify-content:space-between; font-size:13px; color:#475569; margin-bottom:10px; gap:12px;"><span>{{ productPriceLabel }}</span><span style="font-weight:700; color:#0F172A; white-space:nowrap;">Rs. {{ productPriceOut }}</span></div>
         <div style="display:flex; justify-content:space-between; font-size:13px; color:#475569; margin-bottom:10px; gap:12px;"><span>+ {{ markupOutLabel }}</span><span style="font-weight:700; color:#0F172A; white-space:nowrap;">Rs. {{ markupOut }}</span></div>
-        <div style="display:flex; justify-content:space-between; font-size:13px; color:#475569; margin-bottom:10px; gap:12px;"><span>+ Delivery zone fee — {{ priceZoneName }}</span><span style="font-weight:700; color:#0F172A; white-space:nowrap;">Rs. {{ priceZoneFee }}</span></div>
+        <div style="display:flex; justify-content:space-between; font-size:13px; color:#475569; margin-bottom:10px; gap:12px;"><span>+ Courier fee — {{ priceZoneName }}</span><span style="font-weight:700; color:#0F172A; white-space:nowrap;">Rs. {{ priceZoneFee }}</span></div>
         <div style="display:flex; justify-content:space-between; font-size:13px; color:#475569; gap:12px;"><span>+ Extra distance fee</span><span style="font-weight:700; color:#0F172A; white-space:nowrap;">Rs. {{ extraFeeOut }}</span></div>
         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:18px; padding-top:16px; border-top:1px solid #F1F5F9; gap:12px;">
-          <span style="font-weight:800; font-size:15px;">Final total</span>
+          <span style="font-weight:800; font-size:15px;">Student pays</span>
           <span style="font-weight:800; font-size:24px; color:#0F766E; white-space:nowrap;">Rs. {{ finalTotal }}</span>
         </div>
-        <div style="background:#F8FAFC; border-radius:12px; padding:13px; margin-top:16px; color:#64748B; font-size:12px; line-height:1.6;">Students see the final total only. Vendor payout stays at the vendor price; markup and fees settle to the platform.</div>
+
+        <div style="margin-top:18px; padding-top:16px; border-top:1px solid #F1F5F9;">
+          <div style="font-weight:800; font-size:13.5px; margin-bottom:12px;">Where the money goes</div>
+          <div style="display:flex; justify-content:space-between; font-size:13px; color:#475569; margin-bottom:9px; gap:12px;"><span>Shop payout (real price)</span><span style="font-weight:700; color:#0F172A;">Rs. {{ shopPayout }}</span></div>
+          <div style="display:flex; justify-content:space-between; font-size:13px; color:#475569; margin-bottom:9px; gap:12px;"><span>Platform product margin</span><span style="font-weight:700; color:#0F172A;">Rs. {{ markupOut }}</span></div>
+          <div style="display:flex; justify-content:space-between; font-size:13px; color:#475569; margin-bottom:9px; gap:12px;"><span>Rider share of courier fee (85%)</span><span style="font-weight:700; color:#0F766E;">Rs. {{ riderShare }}</span></div>
+          <div style="display:flex; justify-content:space-between; font-size:13px; color:#475569; gap:12px;"><span>Platform commission (15%)</span><span style="font-weight:700; color:#B45309;">Rs. {{ adminShare }}</span></div>
+        </div>
+        <div style="background:#F8FAFC; border-radius:12px; padding:13px; margin-top:16px; color:#64748B; font-size:12px; line-height:1.6;">Students see one final price per item — the markup is already inside it and never appears as a separate line at checkout. The platform's rider commission comes only out of the courier fee.</div>
       </div>
     </div>
     </sc-if>
@@ -407,6 +415,138 @@
     </div>
     </sc-if>
 
+    <sc-if value="{{ isProducts }}" hint-placeholder-val="{{false}}">
+    <div>
+      <div style="background:#0F172A; border-radius:16px; padding:18px 20px; margin-bottom:16px; display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap;">
+        <div>
+          <div style="color:#fff; font-weight:800; font-size:15px; margin-bottom:4px;">Register the real price, we publish the final price</div>
+          <div style="color:#94A3B8; font-size:13px; max-width:640px;">Enter what the shop actually charges, then add a percentage or a fixed markup. Students and lecturers only ever see the final price — no markup line appears at checkout.</div>
+        </div>
+        <button style="background:#0F766E; border:none; color:#fff; font-weight:700; font-size:13px; padding:11px 18px; border-radius:10px; cursor:pointer; white-space:nowrap;">Add product</button>
+      </div>
+
+      <div style="background:#fff; border:1px solid #E2E8F0; border-radius:16px; overflow:auto;">
+        <div style="display:grid; grid-template-columns:1.4fr 1.2fr 110px 130px 110px 130px 130px; min-width:900px; gap:10px; padding:12px 20px; font-size:11.5px; font-weight:700; color:#94A3B8; text-transform:uppercase; letter-spacing:0.03em; border-bottom:1px solid #F1F5F9;">
+          <span>Product</span><span>Shop</span><span>Real price</span><span>Markup type</span><span>Markup</span><span>Final price</span><span>Platform margin</span>
+        </div>
+        <sc-for list="{{ products }}" as="p" hint-placeholder-count="6">
+          <div style="display:grid; grid-template-columns:1.4fr 1.2fr 110px 130px 110px 130px 130px; min-width:900px; gap:10px; padding:12px 20px; border-bottom:1px solid #F1F5F9; align-items:center; font-size:13px;">
+            <div><div style="font-weight:700;">{{ p.name }}</div><div style="color:#94A3B8; font-size:11.5px;">{{ p.uni }}</div></div>
+            <span style="color:#64748B;">{{ p.vendor }}</span>
+            <input value="{{ p.cost }}" onChange="{{ p.onCost }}" style="width:100%; border:1px solid #E2E8F0; border-radius:9px; padding:8px 10px; font-size:13px; font-weight:600;"/>
+            <select value="{{ p.mode }}" onChange="{{ p.onMode }}" style="width:100%; border:1px solid #E2E8F0; background:#fff; border-radius:9px; padding:8px 10px; font-size:12.5px; font-weight:600;">
+              <option value="pct">Percentage</option>
+              <option value="fixed">Fixed Rs.</option>
+            </select>
+            <div style="display:flex; align-items:center; gap:6px;">
+              <input value="{{ p.markup }}" onChange="{{ p.onMarkup }}" style="width:100%; border:1px solid #E2E8F0; border-radius:9px; padding:8px 10px; font-size:13px; font-weight:600;"/>
+              <span style="color:#94A3B8; font-size:12px; font-weight:700;">{{ p.unitLabel }}</span>
+            </div>
+            <span style="font-weight:800; color:#0F766E;">Rs. {{ p.finalPriceLabel }}</span>
+            <span style="color:#64748B; font-size:12.5px;">Rs. {{ p.marginValue }} · {{ p.marginPct }}%</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{ isLedger }}" hint-placeholder-val="{{false}}">
+    <div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:16px; margin-bottom:16px;">
+        <sc-for list="{{ ledgerKpis }}" as="k" hint-placeholder-count="5">
+          <div style="background:#fff; border:1px solid #E2E8F0; border-radius:16px; padding:18px;">
+            <div style="color:#64748B; font-size:12px; font-weight:600; margin-bottom:8px;">{{ k.label }}</div>
+            <div style="font-size:21px; font-weight:800; margin-bottom:6px;">{{ k.value }}</div>
+            <div style="font-size:11.5px; color:#94A3B8; line-height:1.4;">{{ k.note }}</div>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="background:#fff; border:1px solid #E2E8F0; border-radius:16px; overflow:auto;">
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:16px 20px; border-bottom:1px solid #F1F5F9; gap:12px; flex-wrap:wrap;">
+          <div style="font-weight:800; font-size:15px;">Per-rider settlement</div>
+          <div style="color:#64748B; font-size:12.5px;">Platform takes {{ commissionPct }} of every courier fee — product money always returns to the platform.</div>
+        </div>
+        <div style="display:grid; grid-template-columns:1.3fr 1fr 70px 110px 110px 110px 120px 120px 100px; min-width:1080px; gap:10px; padding:12px 20px; font-size:11.5px; font-weight:700; color:#94A3B8; text-transform:uppercase; letter-spacing:0.03em; border-bottom:1px solid #F1F5F9;">
+          <span>Rider</span><span>University</span><span>Runs</span><span>Courier fees</span><span>Commission</span><span>Rider 85%</span><span>Cash held</span><span>Balance</span><span></span>
+        </div>
+        <sc-for list="{{ ledger }}" as="r" hint-placeholder-count="5">
+          <div style="display:grid; grid-template-columns:1.3fr 1fr 70px 110px 110px 110px 120px 120px 100px; min-width:1080px; gap:10px; padding:14px 20px; border-bottom:1px solid #F1F5F9; align-items:center; font-size:13px;">
+            <span style="font-weight:700;">{{ r.name }}</span>
+            <span style="color:#64748B;">{{ r.uni }}</span>
+            <span style="color:#64748B;">{{ r.batches }}</span>
+            <span style="font-weight:700;">Rs. {{ r.courier }}</span>
+            <span style="color:#B45309; font-weight:700;">Rs. {{ r.commission }}</span>
+            <span style="color:#0F766E; font-weight:700;">Rs. {{ r.net }}</span>
+            <span style="color:#64748B;">Rs. {{ r.cash }}</span>
+            <div><div style="font-size:10.5px; color:#94A3B8; font-weight:700; text-transform:uppercase;">{{ r.balanceLabel }}</div><div style="font-weight:800; color:{{ r.balanceColor }};">Rs. {{ r.balance }}</div></div>
+            <button onClick="{{ r.onSettle }}" style="background:#0F172A; border:none; color:#fff; font-weight:700; font-size:12px; padding:8px 12px; border-radius:9px; cursor:pointer;">Settle</button>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{ isRequests }}" hint-placeholder-val="{{false}}">
+    <div>
+      <div style="background:#FFFBEB; border:1px solid #FDE68A; border-radius:16px; padding:16px 18px; margin-bottom:16px; color:#92400E; font-size:13px; line-height:1.6;">
+        These shops have no account on the platform. Admin calls the shop, confirms the real price, adds the markup, and sends the final price to the student for approval before it joins a batch.
+      </div>
+      <div style="background:#fff; border:1px solid #E2E8F0; border-radius:16px; overflow:auto;">
+        <div style="display:grid; grid-template-columns:80px 1.1fr 1.2fr 1.5fr 100px 110px 120px 130px; min-width:1040px; gap:10px; padding:12px 20px; font-size:11.5px; font-weight:700; color:#94A3B8; text-transform:uppercase; letter-spacing:0.03em; border-bottom:1px solid #F1F5F9;">
+          <span>Ref</span><span>Student</span><span>Shop</span><span>Items</span><span>Budget</span><span>Quoted</span><span>Status</span><span>Action</span>
+        </div>
+        <sc-for list="{{ requests }}" as="r" hint-placeholder-count="5">
+          <div style="display:grid; grid-template-columns:80px 1.1fr 1.2fr 1.5fr 100px 110px 120px 130px; min-width:1040px; gap:10px; padding:14px 20px; border-bottom:1px solid #F1F5F9; align-items:center; font-size:13px;">
+            <span style="font-weight:700;">{{ r.id }}</span>
+            <div><div style="font-weight:600;">{{ r.student }}</div><div style="color:#94A3B8; font-size:11.5px;">{{ r.uni }}</div></div>
+            <div><div style="font-weight:600;">{{ r.shop }}</div><div style="color:#94A3B8; font-size:11.5px;">{{ r.area }}</div></div>
+            <span style="color:#64748B; font-size:12.5px;">{{ r.items }}</span>
+            <span style="color:#64748B;">Rs. {{ r.budgetLabel }}</span>
+            <span style="font-weight:700;">{{ r.quotedLabel }}</span>
+            <span style="background:{{ r.statusBg }}; color:{{ r.statusColor }}; font-weight:700; font-size:11.5px; padding:4px 9px; border-radius:7px; display:inline-block; text-align:center;">{{ r.status }}</span>
+            <sc-if value="{{ r.canAct }}" hint-placeholder-val="{{true}}">
+              <button onClick="{{ r.onAct }}" style="background:#0F766E; border:none; color:#fff; font-weight:700; font-size:12px; padding:8px 12px; border-radius:9px; cursor:pointer;">{{ r.actionLabel }}</button>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{ isRoster }}" hint-placeholder-val="{{false}}">
+    <div>
+      <div style="background:#0F172A; border-radius:16px; padding:18px 20px; margin-bottom:16px;">
+        <div style="color:#fff; font-weight:800; font-size:15px; margin-bottom:4px;">One rider per university, per day</div>
+        <div style="color:#94A3B8; font-size:13px; max-width:680px;">The rostered rider is the only one who sees that campus's orders that day. Duty can change day by day — reassign here and the rider apps update instantly.</div>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:16px;">
+        <sc-for list="{{ roster }}" as="r" hint-placeholder-count="4">
+          <div style="background:#fff; border:1px solid #E2E8F0; border-radius:16px; padding:20px;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:16px;">
+              <div>
+                <div style="font-weight:800; font-size:15px; margin-bottom:2px;">{{ r.uni }}</div>
+                <div style="color:#64748B; font-size:12.5px;">{{ r.queued }} orders queued today</div>
+              </div>
+              <span style="background:{{ r.statusBg }}; color:{{ r.statusColor }}; font-weight:700; font-size:11px; padding:4px 9px; border-radius:7px; white-space:nowrap; flex-shrink:0;">{{ r.status }}</span>
+            </div>
+            <label style="font-size:11px; color:#64748B; font-weight:700; display:block; margin-bottom:6px;">Today's rider</label>
+            <select value="{{ r.today }}" onChange="{{ r.onToday }}" style="width:100%; border:1px solid #E2E8F0; background:#fff; border-radius:10px; padding:10px 12px; font-size:13px; font-weight:600; margin-bottom:12px;">
+              <sc-for list="{{ r.pool }}" as="name" hint-placeholder-count="3"><option value="{{ name }}">{{ name }}</option></sc-for>
+            </select>
+            <label style="font-size:11px; color:#64748B; font-weight:700; display:block; margin-bottom:6px;">Tomorrow's rider</label>
+            <select value="{{ r.tomorrow }}" onChange="{{ r.onTomorrow }}" style="width:100%; border:1px solid #E2E8F0; background:#fff; border-radius:10px; padding:10px 12px; font-size:13px; font-weight:600;">
+              <sc-for list="{{ r.pool }}" as="name" hint-placeholder-count="3"><option value="{{ name }}">{{ name }}</option></sc-for>
+            </select>
+            <sc-if value="{{ r.needsRider }}" hint-placeholder-val="{{false}}">
+              <div style="background:#FEE2E2; color:#DC2626; border-radius:10px; padding:10px 12px; font-size:12px; font-weight:600; margin-top:12px;">No rider on duty — orders are held in the queue.</div>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    </sc-if>
+
     <sc-if value="{{ isComingSoon }}" hint-placeholder-val="{{false}}">
     <div style="background:#fff; border:1px solid #E2E8F0; border-radius:16px; padding:80px 20px; text-align:center;">
       <div style="width:52px; height:52px; border-radius:14px; background:#F1F5F9; margin:0 auto 16px; display:flex; align-items:center; justify-content:center; font-weight:800; color:#94A3B8; font-size:18px;">···</div>
@@ -422,9 +562,9 @@
 <script type="text/x-dc" data-dc-script data-props="{&quot;chartDensity&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;default&quot;: &quot;standard&quot;, &quot;options&quot;: [&quot;standard&quot;, &quot;compact&quot;], &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Behavior&quot;}}">
 const NAV_STRUCTURE = [
   { label: 'Overview', items: [{ key: 'dashboard', label: 'Dashboard' }, { key: 'analytics', label: 'Analytics' }] },
-  { label: 'Operations', items: [{ key: 'orders', label: 'Orders' }, { key: 'batches', label: 'Batches' }, { key: 'zones', label: 'Delivery zones' }, { key: 'pricing', label: 'Pricing rules' }, { key: 'universities', label: 'Universities' }, { key: 'branches', label: 'Branches' }] },
-  { label: 'People', items: [{ key: 'students', label: 'Students' }, { key: 'lecturers', label: 'Lecturers' }, { key: 'riders', label: 'Riders' }, { key: 'vendors', label: 'Vendors' }] },
-  { label: 'Business', items: [{ key: 'products', label: 'Products' }, { key: 'payments', label: 'Payments' }, { key: 'promotions', label: 'Promotions' }, { key: 'reports', label: 'Reports' }] },
+  { label: 'Operations', items: [{ key: 'orders', label: 'Orders' }, { key: 'requests', label: 'Shop requests' }, { key: 'batches', label: 'Batches' }, { key: 'zones', label: 'Delivery zones' }, { key: 'pricing', label: 'Pricing rules' }, { key: 'universities', label: 'Universities' }, { key: 'branches', label: 'Branches' }] },
+  { label: 'People', items: [{ key: 'students', label: 'Students' }, { key: 'lecturers', label: 'Lecturers' }, { key: 'roster', label: 'Rider roster' }, { key: 'riders', label: 'Riders' }, { key: 'vendors', label: 'Vendors' }] },
+  { label: 'Business', items: [{ key: 'products', label: 'Products & prices' }, { key: 'ledger', label: 'Rider ledger' }, { key: 'payments', label: 'Payments' }, { key: 'promotions', label: 'Promotions' }, { key: 'reports', label: 'Reports' }] },
   { label: 'System', items: [{ key: 'support', label: 'Support' }, { key: 'settings', label: 'Settings' }, { key: 'audit', label: 'Audit logs' }] }
 ];
 
@@ -432,6 +572,9 @@ const PAGE_META = {
   dashboard: ['Dashboard', 'Real-time overview across all campuses'],
   analytics: ['Analytics', 'Revenue, growth and performance trends'],
   orders: ['Orders', 'Live and historical order activity'],
+  requests: ['Shop requests', 'Orders for shops that are not registered — call, price, approve'],
+  roster: ['Rider roster', 'One rider per university per day — assign and swap duty'],
+  ledger: ['Rider ledger', 'Courier fees, 15% platform commission, payouts and outstanding'],
   batches: ['Batches', 'Dispatch windows, batch composition and riders'],
   zones: ['Delivery zones', 'Draw polygon zones, set fees and dispatch rules'],
   pricing: ['Pricing rules', 'Product markup, zone fees and the pricing engine'],
@@ -441,7 +584,7 @@ const PAGE_META = {
   lecturers: ['Lecturers', 'Staff and lecturer accounts'],
   riders: ['Riders', 'Delivery rider roster and performance'],
   vendors: ['Vendors', 'Restaurants, shops and service providers'],
-  products: ['Products', 'Menus, items and catalogue'],
+  products: ['Products & prices', 'Register real shop price, add markup, publish the final student price'],
   payments: ['Payments', 'Transactions and payouts'],
   promotions: ['Promotions', 'Discounts and campaigns'],
   reports: ['Reports', 'Exportable operational reports'],
@@ -454,7 +597,8 @@ const KPIS = [
   { label: 'Revenue (30d)', value: 'Rs. 4.82M', trend: '+18.2% vs last month' },
   { label: 'Total orders', value: '12,480', trend: '+9.4% vs last month' },
   { label: 'Batches dispatched', value: '2,140', trend: '5.8 orders per batch avg.' },
-  { label: 'Cost per delivery', value: 'Rs. 94', trend: '−38% vs single-order runs' }
+  { label: 'Courier commission (15%)', value: 'Rs. 318K', trend: '+16.1% vs last month' },
+  { label: 'Rider payouts pending', value: 'Rs. 41.2K', trend: 'Across 32 rostered riders' }
 ];
 
 const REVENUE_SERIES = [2.1, 2.6, 2.9, 3.4, 3.1, 4.0, 4.82];
@@ -556,6 +700,50 @@ const BATCHES = [
   { id: 'B-2036', window: '3:00 PM', rider: 'Chathura W.', zone: 'Zone A', stops: 5, shops: 2, status: 'Completed' }
 ];
 
+const COMMISSION = 0.15;
+
+const PRODUCTS_SEED = [
+  { id: 'p1', name: 'Chicken Kottu', vendor: 'Green Leaf Kottu House', uni: 'Sabaragamuwa', cost: 600, mode: 'pct', markup: 8 },
+  { id: 'p2', name: 'Rice 5kg', vendor: 'FreshMart Grocery', uni: 'Sabaragamuwa', cost: 1380, mode: 'fixed', markup: 70 },
+  { id: 'p3', name: 'Paracetamol 500mg (10)', vendor: 'Campus Pharmacy', uni: 'Ruhuna', cost: 110, mode: 'fixed', markup: 10 },
+  { id: 'p4', name: 'Scientific Calculator', vendor: 'Uni Book Nook', uni: 'Rajarata', cost: 2950, mode: 'pct', markup: 8.5 },
+  { id: 'p5', name: 'Fish Bun', vendor: 'Hilltop Bakers', uni: 'Ruhuna', cost: 55, mode: 'fixed', markup: 5 },
+  { id: 'p6', name: 'Colour Print (per page)', vendor: 'QuickPrint Studio', uni: 'Uva Wellassa', cost: 22, mode: 'pct', markup: 14 }
+];
+
+const LEDGER_SEED = [
+  { id: 'l1', name: 'Kasun Perera', uni: 'Sabaragamuwa', batches: 21, courier: 14840, cash: 18450, paidOut: 10600 },
+  { id: 'l2', name: 'Nimal Silva', uni: 'Ruhuna', batches: 18, courier: 12260, cash: 15120, paidOut: 9200 },
+  { id: 'l3', name: 'Dilani Fernando', uni: 'Rajarata', batches: 16, courier: 10980, cash: 9840, paidOut: 9330 },
+  { id: 'l4', name: 'Ruwan Bandara', uni: 'Sabaragamuwa', batches: 12, courier: 7640, cash: 6480, paidOut: 4100 },
+  { id: 'l5', name: 'Amaya Jayasuriya', uni: 'Uva Wellassa', batches: 9, courier: 5820, cash: 4260, paidOut: 4947 }
+];
+
+const SHOP_REQUESTS_SEED = [
+  { id: 'R-118', student: 'Nadeesha Perera', uni: 'Sabaragamuwa', shop: 'Sumudu Hardware', area: 'Belihuloya junction', items: '2x A3 drawing sheets, 1x wide masking tape', budget: 2500, status: 'New', quoted: 0 },
+  { id: 'R-117', student: 'Kavindu Ranasinghe', uni: 'Sabaragamuwa', shop: 'New Lanka Cycle Works', area: 'Belihuloya town', items: 'Bicycle inner tube 26"', budget: 1800, status: 'Calling shop', quoted: 0 },
+  { id: 'R-116', student: 'Ishara Peiris', uni: 'Ruhuna', shop: 'Matara Photo Centre', area: 'Matara bus stand', items: '6 passport photos + 2 prints', budget: 900, status: 'Priced', quoted: 780 },
+  { id: 'R-115', student: 'Sanduni Wickramasinghe', uni: 'Rajarata', shop: 'Mihintale Ayurveda Store', area: 'Mihintale', items: 'Samahan 30 pack, balm', budget: 1500, status: 'Approved', quoted: 1240 },
+  { id: 'R-114', student: 'Dilshan Kumara', uni: 'Ruhuna', shop: 'Star Sports', area: 'Matara', items: 'Badminton grip x2', budget: 1200, status: 'Rejected', quoted: 1650 }
+];
+
+const REQUEST_STATUS_STYLE = {
+  New: ['#DBEAFE', '#1D4ED8'], 'Calling shop': ['#FEF3C7', '#B45309'],
+  Priced: ['#EDE9FE', '#7C3AED'], Approved: ['#ECFDF5', '#0F766E'], Rejected: ['#FEE2E2', '#DC2626']
+};
+
+const ROSTER_SEED = [
+  { uni: 'Sabaragamuwa University', today: 'Kasun Perera', tomorrow: 'Ruwan Bandara', pool: ['Kasun Perera', 'Ruwan Bandara', 'Sunil Alwis'], queued: 18, status: 'Delivering' },
+  { uni: 'Ruhuna University', today: 'Nimal Silva', tomorrow: 'Chathura Wijesinghe', pool: ['Nimal Silva', 'Chathura Wijesinghe'], queued: 14, status: 'Collecting' },
+  { uni: 'Rajarata University', today: 'Dilani Fernando', tomorrow: 'Dilani Fernando', pool: ['Dilani Fernando', 'Pradeep Kumara'], queued: 9, status: 'Queued' },
+  { uni: 'Uva Wellassa University', today: 'Unassigned', tomorrow: 'Amaya Jayasuriya', pool: ['Unassigned', 'Amaya Jayasuriya'], queued: 6, status: 'Needs rider' }
+];
+
+const ROSTER_STATUS_STYLE = {
+  Delivering: ['#FEF3C7', '#B45309'], Collecting: ['#DBEAFE', '#1D4ED8'],
+  Queued: ['#F1F5F9', '#64748B'], 'Needs rider': ['#FEE2E2', '#DC2626']
+};
+
 const BATCH_STATUS_STYLE = {
   Delivering: ['#FEF3C7', '#B45309'], Collecting: ['#DBEAFE', '#1D4ED8'],
   Queued: ['#F1F5F9', '#64748B'], Completed: ['#ECFDF5', '#0F766E']
@@ -566,7 +754,8 @@ class Component extends DCLogic {
     page: 'dashboard', uniFilter: 'All universities', orderFilter: 'All',
     zones: ZONE_SEED, activeZoneId: 'z1', draft: [], drawing: false,
     dispatchInterval: 30, maxOrders: 8, maxRadius: 7,
-    priceMode: 'percentage', markupValue: 6, basePrice: 650, priceZoneId: 'z1', shopOutside: false
+    priceMode: 'percentage', markupValue: 6, basePrice: 650, priceZoneId: 'z1', shopOutside: false,
+    products: PRODUCTS_SEED, requests: SHOP_REQUESTS_SEED, roster: ROSTER_SEED, ledger: LEDGER_SEED
   };
 
   mapRef = React.createRef();
@@ -586,7 +775,7 @@ class Component extends DCLogic {
     const L = window.L;
     if (!this._map) {
       this._map = L.map(el, { attributionControl: false }).setView([6.7125, 80.7785], 15);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(this._map);
+      L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', { maxZoom: 20, subdomains: ['mt0', 'mt1', 'mt2', 'mt3'] }).addTo(this._map);
       this._layer = L.layerGroup().addTo(this._map);
       this._map.on('click', e => {
         if (!this.state.drawing) return;
@@ -610,6 +799,10 @@ class Component extends DCLogic {
     setTimeout(() => { if (this._map) this._map.invalidateSize(); }, 60);
   }
 
+  patchList(key, id, patch) {
+    this.setState(st => ({ [key]: st[key].map(x => x.id === id ? Object.assign({}, x, patch) : x) }));
+  }
+
   updateZone(id, patch) {
     this.setState(st => ({ zones: st.zones.map(z => z.id === id ? Object.assign({}, z, patch) : z) }));
   }
@@ -627,7 +820,79 @@ class Component extends DCLogic {
     }));
 
     const [title, subtitle] = PAGE_META[s.page] || ['', ''];
-    const knownPages = ['dashboard', 'orders', 'universities', 'vendors', 'riders', 'zones', 'pricing', 'batches'];
+    const knownPages = ['dashboard', 'orders', 'universities', 'vendors', 'riders', 'zones', 'pricing', 'batches', 'products', 'ledger', 'requests', 'roster'];
+
+    const finalPriceOf = p => p.mode === 'fixed'
+      ? Number(p.cost) + Number(p.markup)
+      : Math.round(Number(p.cost) * (1 + Number(p.markup) / 100));
+    const products = s.products.map(p => {
+      const final = finalPriceOf(p);
+      return Object.assign({}, p, {
+        finalPrice: final,
+        marginValue: (final - Number(p.cost)).toLocaleString(),
+        finalPriceLabel: final.toLocaleString(),
+        marginPct: (((final - Number(p.cost)) / Number(p.cost)) * 100).toFixed(1),
+        unitLabel: p.mode === 'fixed' ? 'Rs.' : '%',
+        onCost: e => this.patchList('products', p.id, { cost: Number(e.target.value) || 0 }),
+        onMarkup: e => this.patchList('products', p.id, { markup: Number(e.target.value) || 0 }),
+        onMode: e => this.patchList('products', p.id, { mode: e.target.value })
+      });
+    });
+
+    const ledger = s.ledger.map(r => {
+      const commission = Math.round(r.courier * COMMISSION);
+      const net = r.courier - commission;
+      const owedByRider = Math.max(r.cash - Math.round(r.cash * (net / (r.courier || 1)) * 0.12), 0);
+      const owedToRider = Math.max(net - r.paidOut, 0);
+      const balance = owedByRider - owedToRider;
+      return Object.assign({}, r, {
+        commission, net, owedByRider, owedToRider,
+        balance: Math.abs(balance),
+        balanceLabel: balance >= 0 ? 'Rider owes' : 'We owe',
+        balanceColor: balance >= 0 ? '#B45309' : '#0F766E',
+        onSettle: () => this.patchList('ledger', r.id, { cash: 0, paidOut: net })
+      });
+    });
+    const totalCourier = ledger.reduce((a, r) => a + r.courier, 0);
+    const totalCommission = ledger.reduce((a, r) => a + r.commission, 0);
+    const totalRiderNet = totalCourier - totalCommission;
+    const totalOutstanding = ledger.reduce((a, r) => a + Math.max(r.owedByRider, 0), 0);
+    const totalPayable = ledger.reduce((a, r) => a + r.owedToRider, 0);
+    const ledgerView = ledger.map(r => Object.assign({}, r, {
+      courier: r.courier.toLocaleString(), commission: r.commission.toLocaleString(),
+      net: r.net.toLocaleString(), cash: r.cash.toLocaleString(), balance: r.balance.toLocaleString()
+    }));
+    const ledgerKpis = [
+      { label: 'Courier fees collected', value: 'Rs. ' + totalCourier.toLocaleString(), note: 'Across ' + ledger.length + ' active riders' },
+      { label: 'Platform commission (15%)', value: 'Rs. ' + totalCommission.toLocaleString(), note: 'Admin revenue from courier fees' },
+      { label: 'Rider earnings (85%)', value: 'Rs. ' + totalRiderNet.toLocaleString(), note: 'Owed to riders in total' },
+      { label: 'Cash outstanding', value: 'Rs. ' + totalOutstanding.toLocaleString(), note: 'Product money riders must settle' },
+      { label: 'Payouts pending', value: 'Rs. ' + totalPayable.toLocaleString(), note: 'To transfer to rider accounts' }
+    ];
+
+    const requests = s.requests.map(r => {
+      const st = REQUEST_STATUS_STYLE[r.status] || ['#F1F5F9', '#64748B'];
+      const nextStatus = r.status === 'New' ? 'Calling shop' : r.status === 'Calling shop' ? 'Priced' : r.status === 'Priced' ? 'Approved' : r.status;
+      return Object.assign({}, r, {
+        statusBg: st[0], statusColor: st[1],
+        quotedLabel: r.quoted ? 'Rs. ' + r.quoted.toLocaleString() : '—',
+        budgetLabel: r.budget.toLocaleString(),
+        overBudget: r.quoted > r.budget,
+        actionLabel: r.status === 'New' ? 'Call shop' : r.status === 'Calling shop' ? 'Add quoted price' : r.status === 'Priced' ? 'Send to student' : 'View',
+        canAct: ['New', 'Calling shop', 'Priced'].includes(r.status),
+        onAct: () => this.patchList('requests', r.id, { status: nextStatus, quoted: r.quoted || Math.round(r.budget * 0.82) })
+      });
+    });
+
+    const roster = s.roster.map(r => {
+      const st = ROSTER_STATUS_STYLE[r.status] || ['#F1F5F9', '#64748B'];
+      return Object.assign({}, r, {
+        statusBg: st[0], statusColor: st[1],
+        needsRider: r.today === 'Unassigned',
+        onToday: e => this.setState(prev => ({ roster: prev.roster.map(x => x.uni === r.uni ? Object.assign({}, x, { today: e.target.value, status: e.target.value === 'Unassigned' ? 'Needs rider' : 'Queued' }) : x) })),
+        onTomorrow: e => this.setState(prev => ({ roster: prev.roster.map(x => x.uni === r.uni ? Object.assign({}, x, { tomorrow: e.target.value }) : x) }))
+      });
+    });
 
     const zones = s.zones.map(z => {
       const active = z.id === s.activeZoneId;
@@ -698,6 +963,12 @@ class Component extends DCLogic {
       isZones: s.page === 'zones',
       isPricing: s.page === 'pricing',
       isBatches: s.page === 'batches',
+      isProducts: s.page === 'products',
+      isLedger: s.page === 'ledger',
+      isRequests: s.page === 'requests',
+      isRoster: s.page === 'roster',
+      products, ledger: ledgerView, ledgerKpis, requests, roster,
+      commissionPct: '15%',
       isComingSoon: !knownPages.includes(s.page) && s.page !== 'analytics',
       mapRef: this.mapRef,
       zones, activeZoneName: activeZone.name,
@@ -742,6 +1013,9 @@ class Component extends DCLogic {
       outsideKnobRight: s.shopOutside ? '2px' : '19px',
       productPriceOut: productPrice,
       markupOut: markup,
+      shopPayout: productPrice,
+      riderShare: Math.round((priceZone.fee + extraFee) * (1 - COMMISSION)),
+      adminShare: (priceZone.fee + extraFee) - Math.round((priceZone.fee + extraFee) * (1 - COMMISSION)),
       extraFeeOut: extraFee,
       finalTotal,
       productPriceLabel: s.priceMode === 'catalog' ? 'Custom catalog price' : 'Original product price',

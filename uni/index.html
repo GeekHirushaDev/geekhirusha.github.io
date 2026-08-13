@@ -233,6 +233,14 @@
       </sc-for>
     </div>
 
+    <div onClick="{{ goRequest }}" style="background:#0F172A; border-radius:16px; padding:20px; margin-bottom:32px; display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap; cursor:pointer;">
+      <div>
+        <div style="color:#fff; font-weight:800; font-size:15px; margin-bottom:4px;">Shop not on the list? We'll still get it.</div>
+        <div style="color:#94A3B8; font-size:13px; max-width:520px;">Tell us the shop and what you need — our team calls the shop, confirms the price with you, and adds it to today's campus run.</div>
+      </div>
+      <span style="background:#F59E0B; color:#1F2937; font-weight:700; font-size:13px; padding:11px 18px; border-radius:10px; white-space:nowrap;">Request any shop →</span>
+    </div>
+
     <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:16px;">
       <h2 style="font-size:19px; font-weight:800; margin:0;">Nearby shops</h2>
     </div>
@@ -381,14 +389,70 @@
       </div>
 
       <div style="background:#fff; border:1px solid #E2E8F0; border-radius:16px; padding:18px; margin-bottom:20px;">
-        <div style="font-weight:700; font-size:14px; margin-bottom:14px;">Delivery address</div>
-        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px;">
+        <div style="font-weight:700; font-size:14px; margin-bottom:4px;">Delivery location</div>
+        <div style="color:#64748B; font-size:12.5px; margin-bottom:14px;">Use your saved home, your live location, or drop a pin on the map. Your zone sets the courier fee.</div>
+
+        <div style="display:flex; gap:8px; background:#F1F5F9; border-radius:12px; padding:4px; margin-bottom:16px;">
+          <sc-for list="{{ locModes }}" as="lm" hint-placeholder-count="3">
+            <div onClick="{{ lm.onClick }}" style="flex:1; text-align:center; padding:9px 8px; border-radius:9px; font-size:12.5px; font-weight:700; cursor:pointer; background:{{ lm.bg }}; color:{{ lm.color }}; box-shadow:{{ lm.shadow }};">{{ lm.label }}</div>
+          </sc-for>
+        </div>
+
+        <sc-if value="{{ isHomeLoc }}" hint-placeholder-val="{{true}}">
+        <div style="border:1.5px solid #0F766E; background:#ECFDF5; border-radius:12px; padding:14px; display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
           <div>
-            <label style="font-size:12px; color:#64748B; font-weight:600; display:block; margin-bottom:6px;">Hostel / residence</label>
-            <select value="{{ hostel }}" onChange="{{ onHostelChange }}" style="width:100%; border:1px solid #E2E8F0; border-radius:10px; padding:10px 12px; font-size:13px;">
-              <sc-for list="{{ hostels }}" as="h" hint-placeholder-count="4"><option value="{{ h }}">{{ h }}</option></sc-for>
-            </select>
+            <div style="font-weight:700; font-size:13.5px; color:#0F172A;">{{ homeLabel }}</div>
+            <div style="color:#0F766E; font-size:12px;">{{ homeSub }}</div>
           </div>
+          <span style="background:#fff; color:#0F766E; font-weight:700; font-size:11.5px; padding:5px 10px; border-radius:8px;">Saved home</span>
+        </div>
+        </sc-if>
+
+        <sc-if value="{{ isLiveLoc }}" hint-placeholder-val="{{false}}">
+        <div style="border:1px solid #E2E8F0; border-radius:12px; padding:14px;">
+          <sc-if value="{{ !liveDetected }}" hint-placeholder-val="{{true}}">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
+            <div style="font-size:12.5px; color:#64748B;">We'll use your device GPS to find your exact spot on campus.</div>
+            <button onClick="{{ detectLive }}" style="background:#0F172A; border:none; color:#fff; font-weight:700; font-size:12.5px; padding:10px 16px; border-radius:10px; cursor:pointer; white-space:nowrap;">Use my live location</button>
+          </div>
+          </sc-if>
+          <sc-if value="{{ liveDetected }}" hint-placeholder-val="{{false}}">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
+            <div>
+              <div style="font-weight:700; font-size:13.5px;">{{ liveLabel }}</div>
+              <div style="color:#64748B; font-size:12px;">{{ pickedCoordLabel }} · accuracy ±12 m</div>
+            </div>
+            <button onClick="{{ detectLive }}" style="background:#F1F5F9; border:none; color:#0F172A; font-weight:700; font-size:12px; padding:9px 14px; border-radius:9px; cursor:pointer;">Refresh</button>
+          </div>
+          </sc-if>
+        </div>
+        </sc-if>
+
+        <sc-if value="{{ isMapLoc }}" hint-placeholder-val="{{false}}">
+        <div>
+          <div style="display:flex; gap:8px; margin-bottom:10px;">
+            <input value="{{ mapQuery }}" onChange="{{ onMapQueryChange }}" placeholder="Search a place — e.g. Wewalwatta Hostel" style="flex:1; border:1px solid #E2E8F0; border-radius:10px; padding:11px 13px; font-size:13px;"/>
+            <button onClick="{{ searchPlace }}" style="background:#0F172A; border:none; color:#fff; font-weight:700; font-size:12.5px; padding:11px 16px; border-radius:10px; cursor:pointer;">Search</button>
+          </div>
+          <sc-if value="{{ hasPlaceResults }}" hint-placeholder-val="{{false}}">
+          <div style="border:1px solid #E2E8F0; border-radius:12px; overflow:hidden; margin-bottom:10px;">
+            <sc-for list="{{ placeResults }}" as="pl" hint-placeholder-count="3">
+              <div onClick="{{ pl.onClick }}" style="padding:11px 13px; border-bottom:1px solid #F1F5F9; cursor:pointer; display:flex; justify-content:space-between; gap:10px;">
+                <span style="font-size:13px; font-weight:600;">{{ pl.name }}</span>
+                <span style="font-size:11.5px; color:#94A3B8;">{{ pl.hint }}</span>
+              </div>
+            </sc-for>
+          </div>
+          </sc-if>
+          <div ref="{{ pickRef }}" style="height:220px; border-radius:14px; border:1px solid #E2E8F0; overflow:hidden; background:#EEF2F6;"></div>
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; margin-top:10px; flex-wrap:wrap;">
+            <div style="font-size:12.5px; color:#64748B;">Tap the map to move your pin.</div>
+            <div style="font-size:12px; font-weight:700; color:#0F172A;">{{ pickedCoordLabel }}</div>
+          </div>
+        </div>
+        </sc-if>
+
+        <div style="margin-top:16px; display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px;">
           <div>
             <label style="font-size:12px; color:#64748B; font-weight:600; display:block; margin-bottom:6px;">Faculty</label>
             <select value="{{ faculty }}" onChange="{{ onFacultyChange }}" style="width:100%; border:1px solid #E2E8F0; border-radius:10px; padding:10px 12px; font-size:13px;">
@@ -396,17 +460,14 @@
             </select>
           </div>
           <div>
-            <label style="font-size:12px; color:#64748B; font-weight:600; display:block; margin-bottom:6px;">Department (optional)</label>
-            <input value="{{ department }}" onChange="{{ onDepartmentChange }}" placeholder="e.g. ICT" style="width:100%; border:1px solid #E2E8F0; border-radius:10px; padding:10px 12px; font-size:13px;"/>
-          </div>
-          <div>
             <label style="font-size:12px; color:#64748B; font-weight:600; display:block; margin-bottom:6px;">Building / room</label>
             <input value="{{ building }}" onChange="{{ onBuildingChange }}" placeholder="e.g. Room 214" style="width:100%; border:1px solid #E2E8F0; border-radius:10px; padding:10px 12px; font-size:13px;"/>
           </div>
         </div>
+
         <div style="margin-top:14px; background:#ECFDF5; border-radius:12px; padding:12px 14px; display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;">
-          <div style="font-size:12.5px; color:#0F766E; font-weight:600;">Delivery zone: <b>{{ zoneName }}</b></div>
-          <div style="font-size:12.5px; color:#0F766E; font-weight:700;">{{ zoneFeeValue }}</div>
+          <div style="font-size:12.5px; color:#0F766E; font-weight:600;">Detected zone: <b>{{ zoneName }}</b></div>
+          <div style="font-size:12.5px; color:#0F766E; font-weight:700;">Courier fee {{ zoneFeeValue }}</div>
         </div>
       </div>
 
@@ -436,8 +497,7 @@
 
       <div style="background:#fff; border:1px solid #E2E8F0; border-radius:16px; padding:18px; margin-bottom:24px;">
         <div style="font-weight:700; font-size:14px; margin-bottom:14px;">Price breakdown</div>
-        <div style="display:flex; justify-content:space-between; font-size:13px; color:#475569; margin-bottom:8px;"><span>Product price (original)</span><span>Rs. {{ cartSubtotal }}</span></div>
-        <div style="display:flex; justify-content:space-between; font-size:13px; color:#475569; margin-bottom:8px;"><span>{{ markupLabel }}</span><span>Rs. {{ markupAmount }}</span></div>
+        <div style="display:flex; justify-content:space-between; font-size:13px; color:#475569; margin-bottom:8px;"><span>Items ({{ cartCount }})</span><span>Rs. {{ cartSubtotal }}</span></div>
         <div style="display:flex; justify-content:space-between; font-size:13px; color:#475569; margin-bottom:8px;"><span>{{ zoneFeeLabel }}</span><span>{{ zoneFeeValue }}</span></div>
         <sc-if value="{{ hasExtraDistanceFee }}" hint-placeholder-val="{{false}}">
           <div style="display:flex; justify-content:space-between; font-size:13px; color:#B45309; margin-bottom:8px;"><span>Extra distance fee (shop outside your zone)</span><span>Rs. {{ extraDistanceFee }}</span></div>
@@ -445,7 +505,8 @@
         <sc-if value="{{ couponApplied }}" hint-placeholder-val="{{false}}">
           <div style="display:flex; justify-content:space-between; font-size:13px; color:#0F766E; margin-bottom:8px;"><span>Discount</span><span>−Rs. {{ discount }}</span></div>
         </sc-if>
-        <div style="display:flex; justify-content:space-between; font-size:16px; font-weight:800; margin-top:12px; padding-top:12px; border-top:1px solid #F1F5F9;"><span>Final total</span><span>Rs. {{ cartTotal }}</span></div>
+        <div style="display:flex; justify-content:space-between; font-size:16px; font-weight:800; margin-top:12px; padding-top:12px; border-top:1px solid #F1F5F9;"><span>Total to pay</span><span>Rs. {{ cartTotal }}</span></div>
+        <div style="margin-top:12px; background:#F8FAFC; border-radius:10px; padding:11px 13px; color:#64748B; font-size:12px; line-height:1.55;">Item prices are the final shelf prices set for campus delivery — nothing is added at checkout. Only the courier fee for your zone is separate.</div>
       </div>
 
       <button onClick="{{ placeOrder }}" style="width:100%; background:#0F766E; border:none; color:#fff; font-weight:700; font-size:16px; padding:16px; border-radius:14px; cursor:pointer; box-shadow:0 8px 24px rgba(15,118,110,0.28);">Place order · Rs. {{ cartTotal }}</button>
@@ -459,6 +520,60 @@
         <div style="color:#64748B; font-size:14px; margin-bottom:20px;">Browse nearby shops to get started.</div>
         <button onClick="{{ goHome }}" style="background:#0F766E; border:none; color:#fff; font-weight:700; font-size:14px; padding:12px 22px; border-radius:12px; cursor:pointer;">Browse shops</button>
       </div>
+    </sc-if>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{isRequest}}" hint-placeholder-val="{{false}}">
+  <div style="max-width:720px; margin:0 auto; padding:24px clamp(16px,4vw,40px) 60px;">
+    <sc-if value="{{ !requestSent }}" hint-placeholder-val="{{true}}">
+    <div>
+      <h1 style="font-size:22px; font-weight:800; letter-spacing:-0.01em; margin:0 0 6px;">Order from any shop</h1>
+      <p style="color:#64748B; font-size:13.5px; line-height:1.6; margin:0 0 20px; max-width:560px;">The shop doesn't need an account. Give us the name and what you want — the UNI Delivery team calls them, confirms the price with you, and the item joins today's batch for your campus.</p>
+
+      <div style="background:#fff; border:1px solid #E2E8F0; border-radius:16px; padding:18px; margin-bottom:16px;">
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:14px;">
+          <div>
+            <label style="font-size:12px; color:#64748B; font-weight:600; display:block; margin-bottom:6px;">Shop name</label>
+            <input value="{{ reqShop }}" onChange="{{ onReqShop }}" placeholder="e.g. Sumudu Hardware" style="width:100%; border:1px solid #E2E8F0; border-radius:10px; padding:10px 12px; font-size:13px;"/>
+          </div>
+          <div>
+            <label style="font-size:12px; color:#64748B; font-weight:600; display:block; margin-bottom:6px;">Shop area / town</label>
+            <input value="{{ reqArea }}" onChange="{{ onReqArea }}" placeholder="e.g. Belihuloya junction" style="width:100%; border:1px solid #E2E8F0; border-radius:10px; padding:10px 12px; font-size:13px;"/>
+          </div>
+          <div>
+            <label style="font-size:12px; color:#64748B; font-weight:600; display:block; margin-bottom:6px;">Shop phone (if you know it)</label>
+            <input value="{{ reqPhone }}" onChange="{{ onReqPhone }}" placeholder="Optional" style="width:100%; border:1px solid #E2E8F0; border-radius:10px; padding:10px 12px; font-size:13px;"/>
+          </div>
+          <div>
+            <label style="font-size:12px; color:#64748B; font-weight:600; display:block; margin-bottom:6px;">Your budget cap (Rs.)</label>
+            <input value="{{ reqBudget }}" onChange="{{ onReqBudget }}" placeholder="e.g. 2500" style="width:100%; border:1px solid #E2E8F0; border-radius:10px; padding:10px 12px; font-size:13px;"/>
+          </div>
+        </div>
+        <div style="margin-top:14px;">
+          <label style="font-size:12px; color:#64748B; font-weight:600; display:block; margin-bottom:6px;">What should we buy?</label>
+          <textarea value="{{ reqItems }}" onChange="{{ onReqItems }}" placeholder="e.g. 2 x A3 drawing sheets, 1 x masking tape (wide)" style="width:100%; border:1px solid #E2E8F0; border-radius:10px; padding:12px; font-size:13px; min-height:88px; resize:vertical;"></textarea>
+        </div>
+      </div>
+
+      <div style="background:#fff; border:1px solid #E2E8F0; border-radius:16px; padding:18px; margin-bottom:16px;">
+        <div style="font-weight:700; font-size:14px; margin-bottom:10px;">How it will be priced</div>
+        <div style="display:flex; justify-content:space-between; font-size:13px; color:#475569; margin-bottom:8px;"><span>Shop price (confirmed on the call)</span><span>To confirm</span></div>
+        <div style="display:flex; justify-content:space-between; font-size:13px; color:#475569; margin-bottom:8px;"><span>{{ zoneFeeLabel }}</span><span>{{ zoneFeeValue }}</span></div>
+        <div style="background:#F8FAFC; border-radius:10px; padding:11px 13px; margin-top:10px; color:#64748B; font-size:12px; line-height:1.55;">You'll get one final price to approve before we buy. Nothing is charged until you accept it.</div>
+      </div>
+
+      <button onClick="{{ sendRequest }}" style="width:100%; background:#0F766E; border:none; color:#fff; font-weight:700; font-size:15px; padding:15px; border-radius:14px; cursor:pointer; box-shadow:0 8px 24px rgba(15,118,110,0.25);">Send request to admin</button>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{ requestSent }}" hint-placeholder-val="{{false}}">
+    <div style="background:#fff; border:1px solid #E2E8F0; border-radius:18px; padding:36px 24px; text-align:center;">
+      <div style="width:56px; height:56px; border-radius:50%; background:#ECFDF5; color:#0F766E; font-weight:800; font-size:24px; display:flex; align-items:center; justify-content:center; margin:0 auto 16px;">✓</div>
+      <div style="font-weight:800; font-size:18px; margin-bottom:6px;">Request {{ requestId }} sent</div>
+      <div style="color:#64748B; font-size:13.5px; line-height:1.6; max-width:420px; margin:0 auto 22px;">Admin will call {{ reqShopDisplay }} and send you the confirmed price. Approve it and your item joins the next campus batch.</div>
+      <button onClick="{{ goHome }}" style="background:#0F172A; border:none; color:#fff; font-weight:700; font-size:14px; padding:13px 24px; border-radius:12px; cursor:pointer;">Back to home</button>
+    </div>
     </sc-if>
   </div>
   </sc-if>
@@ -575,10 +690,13 @@
       </sc-for>
     </div>
 
-    <div style="font-weight:800; font-size:16px; margin-bottom:14px;">Saved addresses</div>
-    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; margin-bottom:28px;">
-      <div style="background:#fff; border:1px solid #E2E8F0; border-radius:14px; padding:16px;"><div style="font-weight:700; font-size:14px; margin-bottom:4px;">Kudaligama Hostel</div><div style="color:#64748B; font-size:12px;">Room 214 · Block B</div></div>
-      <div style="background:#fff; border:1px solid #E2E8F0; border-radius:14px; padding:16px;"><div style="font-weight:700; font-size:14px; margin-bottom:4px;">Faculty of Applied Sciences</div><div style="color:#64748B; font-size:12px;">Dept. of ICT, 2nd floor</div></div>
+    <div style="font-weight:800; font-size:16px; margin-bottom:14px;">Saved home location</div>
+    <div style="background:#fff; border:1px solid #E2E8F0; border-radius:14px; padding:16px; display:flex; justify-content:space-between; align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:28px;">
+      <div>
+        <div style="font-weight:700; font-size:14px; margin-bottom:4px;">{{ homeLabel }}</div>
+        <div style="color:#64748B; font-size:12px;">Map pin saved · {{ zoneName }}</div>
+      </div>
+      <button onClick="{{ goCart }}" style="background:#F1F5F9; border:none; color:#0F172A; font-weight:700; font-size:12.5px; padding:10px 16px; border-radius:10px; cursor:pointer;">Change on map</button>
     </div>
 
     <div style="font-weight:800; font-size:16px; margin-bottom:14px;">Settings</div>
@@ -605,7 +723,7 @@
 </div>
 
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props="{&quot;showCampusAlert&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Behavior&quot;}, &quot;deliveryFeeWaived&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: false, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Pricing&quot;}, &quot;markupMode&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;default&quot;: &quot;percentage&quot;, &quot;options&quot;: [&quot;percentage&quot;, &quot;fixed&quot;, &quot;catalog&quot;], &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Pricing&quot;}, &quot;defaultPaymentMethod&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;default&quot;: &quot;card&quot;, &quot;options&quot;: [&quot;card&quot;, &quot;cash&quot;, &quot;wallet&quot;], &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Behavior&quot;}}">
+<script type="text/x-dc" data-dc-script data-props="{&quot;showCampusAlert&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Behavior&quot;}, &quot;deliveryFeeWaived&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: false, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Pricing&quot;}, &quot;defaultPaymentMethod&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;default&quot;: &quot;card&quot;, &quot;options&quot;: [&quot;card&quot;, &quot;cash&quot;, &quot;wallet&quot;], &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Behavior&quot;}}">
 const CATS = [
   { key: 'food', label: 'Food', emoji: 'F', bg: '#FEF3C7', fg: '#B45309' },
   { key: 'groceries', label: 'Groceries', emoji: 'G', bg: '#D1FAE5', fg: '#0F766E' },
@@ -701,13 +819,41 @@ const BATCH_STAGES = [
   { label: 'Delivered', detail: 'Handed over with your delivery code' }
 ];
 
-const ZONES = {
-  'Kudaligama Hostel': { name: 'Zone A — Inner campus', fee: 80 },
-  'Wewalwatta Hostel': { name: 'Zone A — Inner campus', fee: 80 },
-  'Uva Hostel Block A': { name: 'Zone B — Outer campus', fee: 120 },
-  'Uva Hostel Block B': { name: 'Zone B — Outer campus', fee: 120 },
-  'Off-campus – Belihuloya Town': { name: 'Zone C — Belihuloya town', fee: 200 }
-};
+const GMAP_TILES = 'https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}';
+const GMAP_SUBS = ['mt0', 'mt1', 'mt2', 'mt3'];
+
+const ZONE_POLYS = [
+  { name: 'Zone A — Inner campus', short: 'Zone A', fee: 80, outsideFee: 0,
+    coords: [[6.7160, 80.7725], [6.7158, 80.7772], [6.7118, 80.7778], [6.7115, 80.7728]] },
+  { name: 'Zone B — Outer campus', short: 'Zone B', fee: 120, outsideFee: 60,
+    coords: [[6.7116, 80.7780], [6.7112, 80.7828], [6.7072, 80.7822], [6.7076, 80.7776]] },
+  { name: 'Zone C — Belihuloya town', short: 'Zone C', fee: 200, outsideFee: 90,
+    coords: [[6.7178, 80.7788], [6.7172, 80.7846], [6.7126, 80.7840], [6.7130, 80.7784]] }
+];
+const OUT_OF_ZONE = { name: 'Outside serviced zones', short: 'Outside', fee: 260, outsideFee: 120, coords: [] };
+
+function inPoly(pt, poly) {
+  let inside = false;
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+    const yi = poly[i][0], xi = poly[i][1], yj = poly[j][0], xj = poly[j][1];
+    if (((xi > pt[1]) !== (xj > pt[1])) && (pt[0] < (yj - yi) * (pt[1] - xi) / (xj - xi) + yi)) inside = !inside;
+  }
+  return inside;
+}
+function zoneFor(coord) {
+  if (!coord) return ZONE_POLYS[0];
+  for (const z of ZONE_POLYS) if (inPoly(coord, z.coords)) return z;
+  return OUT_OF_ZONE;
+}
+
+const HOME_LOC = { label: 'Kudaligama Hostel — Room 214, Block B', sub: 'Saved on your Google Maps pin · inner campus', coord: [6.7141, 80.7748] };
+
+const PLACES = [
+  { name: 'Wewalwatta Hostel', hint: 'Hostel · 400 m', coord: [6.7128, 80.7766] },
+  { name: 'Faculty of Applied Sciences', hint: 'Faculty · 700 m', coord: [6.7121, 80.7775] },
+  { name: 'Uva Hostel Block A', hint: 'Hostel · 1.4 km', coord: [6.7094, 80.7800] },
+  { name: 'Belihuloya Junction', hint: 'Town · 2.6 km', coord: [6.7152, 80.7812] }
+];
 
 const BATCH_STOPS = [
   { name: 'Kudaligama Hostel — Room 108', detail: 'Tharindu J. · 1 bag' },
@@ -735,10 +881,15 @@ class Component extends DCLogic {
     couponCode: '',
     couponApplied: false,
     notes: '',
-    hostel: HOSTELS[0],
+    locMode: 'home',
+    liveLoc: null,
+    pickedLoc: PLACES[0].coord,
+    mapQuery: '',
+    placeResults: [],
+    reqShop: '', reqArea: '', reqPhone: '', reqBudget: '', reqItems: '',
+    requestSent: false,
     faculty: FACULTIES[0],
-    department: '',
-    building: '',
+    building: 'Room 214',
     payment: null,
     batchStage: 1,
     stopIndex: 0,
@@ -747,6 +898,7 @@ class Component extends DCLogic {
   };
 
   mapRef = React.createRef();
+  pickRef = React.createRef();
 
   componentDidMount() {
     this._onResize = () => this.setState({ isMobile: window.innerWidth < 860 });
@@ -755,10 +907,37 @@ class Component extends DCLogic {
     this.setState({ payment: this.props.defaultPaymentMethod || 'card' });
     this.syncMap();
   }
-  componentDidUpdate() { this.syncMap(); }
+  componentDidUpdate() { this.syncMap(); this.syncPickMap(); }
   componentWillUnmount() {
     window.removeEventListener('resize', this._onResize);
     if (this._map) { this._map.remove(); this._map = null; }
+    if (this._pick) { this._pick.remove(); this._pick = null; }
+  }
+
+  syncPickMap() {
+    const el = this.pickRef.current;
+    if (this.state.view !== 'cart' || this.state.locMode !== 'map') {
+      if (this._pick) { this._pick.remove(); this._pick = null; }
+      return;
+    }
+    if (!el) return;
+    if (!window.L) { setTimeout(() => this.syncPickMap(), 200); return; }
+    const L = window.L;
+    if (!this._pick) {
+      this._pick = L.map(el, { zoomControl: true, attributionControl: false, scrollWheelZoom: false })
+        .setView(this.state.pickedLoc, 16);
+      L.tileLayer(GMAP_TILES, { maxZoom: 20, subdomains: GMAP_SUBS }).addTo(this._pick);
+      this._pickLayer = L.layerGroup().addTo(this._pick);
+      this._pick.on('click', e => this.setState({ pickedLoc: [e.latlng.lat, e.latlng.lng] }));
+    }
+    this._pickLayer.clearLayers();
+    ZONE_POLYS.forEach(z => {
+      L.polygon(z.coords, { color: '#0F766E', weight: 1.5, fillColor: '#0F766E', fillOpacity: 0.07, interactive: false })
+        .addTo(this._pickLayer).bindTooltip(z.short + ' · Rs. ' + z.fee, { direction: 'center' });
+    });
+    L.circleMarker(this.state.pickedLoc, { radius: 9, color: '#fff', weight: 3, fillColor: '#EF4444', fillOpacity: 1 })
+      .addTo(this._pickLayer).bindTooltip('Deliver here', { direction: 'top', permanent: true });
+    setTimeout(() => { if (this._pick) this._pick.invalidateSize(); }, 60);
   }
 
   syncMap() {
@@ -772,7 +951,7 @@ class Component extends DCLogic {
     const L = window.L;
     if (!this._map) {
       this._map = L.map(el, { zoomControl: false, attributionControl: false, dragging: true, scrollWheelZoom: false });
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(this._map);
+      L.tileLayer(GMAP_TILES, { maxZoom: 20, subdomains: GMAP_SUBS }).addTo(this._map);
       this._map.fitBounds(ROUTE_COORDS, { padding: [30, 30] });
       this._layer = L.layerGroup().addTo(this._map);
     }
@@ -857,19 +1036,22 @@ class Component extends DCLogic {
       dec: () => this.changeQty(c.itemId, -1)
     }));
 
-    const zone = ZONES[s.hostel] || ZONES['Kudaligama Hostel'];
+    const activeCoord = s.locMode === 'home' ? HOME_LOC.coord : s.locMode === 'live' ? (s.liveLoc || HOME_LOC.coord) : s.pickedLoc;
+    const zone = zoneFor(activeCoord);
     const zoneFee = this.props.deliveryFeeWaived ? 0 : zone.fee;
-    const markupMode = this.props.markupMode || 'percentage';
-    const fixedMarkup = 25 * cartCount;
-    const pctMarkup = Math.round(cartSubtotal * 0.06);
-    const markupAmount = markupMode === 'fixed' ? fixedMarkup : markupMode === 'catalog' ? 0 : pctMarkup;
-    const markupLabel = markupMode === 'fixed' ? 'Product markup (Rs. 25 / item)'
-      : markupMode === 'catalog' ? 'Product markup (custom catalog price)'
-      : 'Product markup (6%)';
-    const hasExtraDistanceFee = zone.name.indexOf('Zone A') === -1;
-    const extraDistanceFee = hasExtraDistanceFee ? 60 : 0;
+    const hasExtraDistanceFee = zone.short !== 'Zone A';
+    const extraDistanceFee = hasExtraDistanceFee ? zone.outsideFee : 0;
     const discount = s.couponApplied ? Math.round(cartSubtotal * 0.1) : 0;
-    const cartTotal = Math.max(cartSubtotal + markupAmount + zoneFee + extraDistanceFee - discount, 0);
+    const cartTotal = Math.max(cartSubtotal + zoneFee + extraDistanceFee - discount, 0);
+
+    const locModeDefs = [{ key: 'home', label: 'Saved home' }, { key: 'live', label: 'Live location' }, { key: 'map', label: 'Pick on map' }];
+    const locModes = locModeDefs.map(m => {
+      const active = s.locMode === m.key;
+      return { label: m.label, bg: active ? '#fff' : 'transparent', color: active ? '#0F766E' : '#64748B',
+        shadow: active ? '0 1px 3px rgba(15,23,42,0.12)' : 'none',
+        onClick: () => this.setState({ locMode: m.key }) };
+    });
+    const coordLabel = c => c ? c[0].toFixed(5) + ', ' + c[1].toFixed(5) : '—';
 
     const categories = CATS.map(c => ({ ...c, onClick: () => this.setView('home') }));
     const restaurants = RESTAURANTS.map(r => ({ ...r, onClick: () => this.setView('restaurant', r.id) }));
@@ -955,18 +1137,43 @@ class Component extends DCLogic {
       applyCoupon: () => this.setState({ couponApplied: true }),
       couponApplied: s.couponApplied,
       discount,
-      markupLabel, markupAmount,
       zoneName: zone.name,
-      zoneFeeLabel: 'Delivery zone fee (' + zone.name.split(' — ')[0] + ')',
+      zoneFeeLabel: 'Courier fee (' + zone.short + ')',
       zoneFeeValue: zoneFee === 0 ? 'Free' : 'Rs. ' + zoneFee,
       hasExtraDistanceFee, extraDistanceFee,
       dispatchCountdown: '12 min',
       expectedWindow: '4:30 – 5:00 PM',
       notes: s.notes, onNotesChange: e => this.setState({ notes: e.target.value }),
-      hostel: s.hostel, onHostelChange: e => this.setState({ hostel: e.target.value }), hostels: HOSTELS,
       faculty: s.faculty, onFacultyChange: e => this.setState({ faculty: e.target.value }), faculties: FACULTIES,
-      department: s.department, onDepartmentChange: e => this.setState({ department: e.target.value }),
       building: s.building, onBuildingChange: e => this.setState({ building: e.target.value }),
+
+      locModes,
+      isHomeLoc: s.locMode === 'home', isLiveLoc: s.locMode === 'live', isMapLoc: s.locMode === 'map',
+      homeLabel: HOME_LOC.label, homeSub: HOME_LOC.sub,
+      liveDetected: !!s.liveLoc,
+      liveLabel: 'Near Wewalwatta Hostel gate',
+      detectLive: () => this.setState({ liveLoc: [6.7130 + (Math.random() - 0.5) * 0.002, 80.7765 + (Math.random() - 0.5) * 0.002] }),
+      pickedCoordLabel: coordLabel(activeCoord),
+      pickRef: this.pickRef,
+      mapQuery: s.mapQuery,
+      onMapQueryChange: e => this.setState({ mapQuery: e.target.value }),
+      searchPlace: () => this.setState(st => ({
+        placeResults: PLACES.filter(p => !st.mapQuery || p.name.toLowerCase().indexOf(st.mapQuery.toLowerCase()) >= 0)
+      })),
+      hasPlaceResults: s.placeResults.length > 0,
+      placeResults: s.placeResults.map(p => ({ name: p.name, hint: p.hint, onClick: () => this.setState({ pickedLoc: p.coord, placeResults: [], mapQuery: p.name }) })),
+
+      isRequest: s.view === 'request',
+      goRequest: () => { this.setState({ requestSent: false }); this.setView('request'); },
+      requestSent: s.requestSent,
+      requestId: 'R-118',
+      reqShop: s.reqShop, onReqShop: e => this.setState({ reqShop: e.target.value }),
+      reqArea: s.reqArea, onReqArea: e => this.setState({ reqArea: e.target.value }),
+      reqPhone: s.reqPhone, onReqPhone: e => this.setState({ reqPhone: e.target.value }),
+      reqBudget: s.reqBudget, onReqBudget: e => this.setState({ reqBudget: e.target.value }),
+      reqItems: s.reqItems, onReqItems: e => this.setState({ reqItems: e.target.value }),
+      reqShopDisplay: s.reqShop || 'the shop',
+      sendRequest: () => { this.setState({ requestSent: true }); window.scrollTo(0, 0); },
       paymentMethods,
       placeOrder: () => {
         if (cartTotal <= 0) return;
